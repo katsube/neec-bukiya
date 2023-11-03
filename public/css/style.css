@@ -3,7 +3,7 @@
 }
 
 body{
-    background-image: url(/image/bg/bg_bukiya.jpg);
+    background-image: url(../image/bg/bg_bukiya.jpg);
     background-repeat: no-repeat;
     background-size: cover;
 }

@@ -51,7 +51,7 @@ async function renderProductList() {
  * @return {Promise} 商品一覧
  */
 function getProductList() {
-  return fetchApi('/api/item/list.php');
+  return fetchApi('api/item/list.php');
 }
 
 /**
