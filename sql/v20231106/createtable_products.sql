@@ -1,9 +1,9 @@
 CREATE TABLE Products (
     id          int,
-    name        varchar(255) NOT NULL,
+    name        varchar(128) NOT NULL,
+    description varchar(255),
+    image       varchar(32),
     price       int          NOT NULL,
-    image       varchar(255) DEFAULT NULL,
-    description varchar(255) DEFAULT NULL,
     regist_date datetime     NOT NULL,
     update_date datetime     NOT NULL,
 
