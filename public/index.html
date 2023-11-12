@@ -71,7 +71,10 @@
           <img src="image/weapon/{{#if image}}{{image}}{{else}}noimage.png{{/if}}" width="100%" height="200">
           <div class="card-body">
             <p class="card-text">
-              <h1>{{name}}</h1>
+              <h1>
+                {{name}}
+                <span class="badge text-bg-info">{{#showCategory category}}{{/showCategory}}</span>
+              </h1>
               {{#if description}}{{description}}{{else}}&nbsp;{{/if}}
             </p>
             <div class="d-flex justify-content-between align-items-center">

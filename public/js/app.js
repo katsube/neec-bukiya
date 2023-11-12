@@ -26,7 +26,18 @@ async function renderProductList(products=null) {
   const list   = document.querySelector('#product-list');   // 商品一覧の親要素
   const source = document.querySelector('#template-product-list-item'); // handlebarsのテンプレート
   const template = Handlebars.compile(source.innerHTML);
-
+  Handlebars.registerHelper('showCategory', (category, option)=>{
+    const list = {
+      'TWS': '両手',
+      'GUN': '銃',
+      'ARM': '腕',
+      'MAG': '魔法'
+    }
+    if( category in list ) {
+      return list[category];
+    }
+    return '?';
+  });
   //---------------------------------------------
   // APIから商品一覧を取得
   //---------------------------------------------
