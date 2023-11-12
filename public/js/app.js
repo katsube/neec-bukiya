@@ -2,7 +2,18 @@
  * [event] ページ読み込み完了時
  */
 window.addEventListener('load', async ()=>{
+  // 最初の商品一覧を描画
   renderProductList();
+
+  // 商品絞り込みタブのクリック時
+  const tabEl = document.querySelectorAll('button[data-bs-toggle="pill"]');
+  tabEl.forEach((element)=>{
+    element.addEventListener('click', async ()=>{
+      const category = element.getAttribute('data-category');
+      const products = await getProductList(category);
+      renderProductList(products);
+    });
+  });
 });
 
 
@@ -11,7 +22,7 @@ window.addEventListener('load', async ()=>{
  *
  * @returns {void|false}
  */
-async function renderProductList() {
+async function renderProductList(products=null) {
   const list   = document.querySelector('#product-list');   // 商品一覧の親要素
   const source = document.querySelector('#template-product-list-item'); // handlebarsのテンプレート
   const template = Handlebars.compile(source.innerHTML);
@@ -20,7 +31,9 @@ async function renderProductList() {
   // APIから商品一覧を取得
   //---------------------------------------------
   // リクエスト送信
-  const products = await getProductList();
+  if( products === null ){
+    products = await getProductList();
+  }
   console.log('[renderProductList] products', products);
 
   // 商品がない場合はアラートを表示し終了
@@ -48,10 +61,17 @@ async function renderProductList() {
 /**
  * REST APIから商品一覧を取得する
  *
+ * @param {string} [category=null] - 商品カテゴリ
  * @return {Promise} 商品一覧
  */
-function getProductList() {
-  return fetchApi('api/item/list.php');
+function getProductList(category=null) {
+  // カテゴリー未指定（初回表示時）
+  if( category === null || category === '' ) {
+    return fetchApi('api/item/list.php');
+  }
+
+  // カテゴリー指定（絞り込み時）
+  return fetchApi('api/item/category.php', {cd:category});
 }
 
 /**
