@@ -6,6 +6,9 @@ class BaseModel{
 	private $dsn = 'mysql:dbname=bukiyadb;host=localhost';
 	private $id  = 'senpai';
 	private $pw  = 'indocurry';
+	//private $dsn = 'mysql:dbname=G999G9999db;host=localhost';
+	//private $id  = 'G999G9999';
+	//private $pw  = 'aqwsedrftgyhuji';
 
 	// DBハンドル
 	public $dbh;
