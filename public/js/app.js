@@ -2,6 +2,9 @@
  * [event] ページ読み込み完了時
  */
 window.addEventListener('load', async ()=>{
+  //---------------------------------------------
+  // 商品一覧
+  //---------------------------------------------
   // 最初の商品一覧を描画
   renderProductList();
 
@@ -14,8 +17,75 @@ window.addEventListener('load', async ()=>{
       renderProductList(products);
     });
   });
+
+  //---------------------------------------------
+  // 新規登録ダイアログ
+  //---------------------------------------------
+  // 登録ボタンクリック時
+  document.querySelector('#btn-join').addEventListener('click', ()=>{
+    document.querySelector('#dialog-join').showModal(); // ダイアログを開く
+    document.querySelector('#join-nickname').focus();   // ニックネームをフォーカス
+  });
+  // 閉じるボタン
+  document.querySelector('#btn-join-close').addEventListener('click', ()=>{
+    document.querySelector('#dialog-join').close();
+  });
+  // 登録ボタン
+  document.querySelector('#btn-join-submit').addEventListener('click', userJoin);
 });
 
+
+/**
+ * ユーザー登録処理
+ *
+ */
+async function userJoin(){
+  // 入力された値を取得
+  const nickname = document.querySelector('#join-nickname');
+  const loginid  = document.querySelector('#join-loginid');
+  const password = document.querySelector('#join-password');
+
+  //---------------------------------------------
+  // バリデーション
+  //---------------------------------------------
+  if( nickname.value === '' ) {
+    alert('ニックネームを入力してください');
+    nickname.focus();
+    return(false);
+  }
+  if( loginid.value === '' ) {
+    alert('ログインIDを入力してください');
+    loginid.focus();
+    return(false);
+  }
+  if( password.value === '' ) {
+    alert('パスワードを入力してください');
+    password.focus();
+    return(false);
+  }
+
+  // 最終確認
+  if( ! confirm('本当に登録しますか？') ) {
+    return(false);
+  }
+
+  //---------------------------------------------
+  // APIに送信
+  //---------------------------------------------
+  // 送信するデータを準備
+  const params = {
+    nickname : nickname.value,
+    loginid  : loginid.value,
+    password : password.value
+  };
+
+  const json = await fetchApi('api/user/join.php', params, 'POST');
+  console.log('[userJoin] json', json);
+  if(  'status' in json && json.status === true ) {
+    alert('登録に成功しました');
+    location.reload();
+  }
+}
 
 /**
  * 商品一覧を描画する
@@ -105,6 +175,7 @@ async function fetchApi(endpoint, query=null, method='GET') {
   // POST
   if( query !== null && method === 'POST' ) {
     params.body = new URLSearchParams(query);
+    params.headers = {};
     params.headers['Content-Type'] = 'application/x-www-form-urlencoded';
   }
   // GET

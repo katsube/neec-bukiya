@@ -1,6 +1,6 @@
 <?php
 /**
- * 指定カテゴリーの商品一覧を返す
+ * ユーザー登録
  *
  */
 
@@ -12,20 +12,14 @@ require_once('../lib/model.php');
 //-----------------------------------------------
 // パラメータを取得
 //-----------------------------------------------
-$cd = isset($_GET['cd'])? $_GET['cd']:null;
-
-//-----------------------------------------------
-// DBから情報を取得
-//-----------------------------------------------
-$products = [ ];
+$nickname = isset($_POST['nickname'])? $_POST['nickname']:null;
+$loginid  = isset($_POST['loginid'])?  $_POST['loginid']:null;
+$password = isset($_POST['password'])? $_POST['password']:null;
 
 //-----------------------------------------------
 // SQLを準備
 //-----------------------------------------------
-$sql = 'SELECT * FROM Products';
-if ( $cd !== null ) {
-	$sql .= ' WHERE category = :cd';
-}
+$sql = 'INSERT INTO Users (nickname, loginid, password) VALUES (:nickname, :loginid, :password)';
 
 try {
 	// DBに接続
@@ -33,13 +27,10 @@ try {
 
 	// SQLを準備して実行
 	$sth = $model->dbh->prepare($sql);		// 準備
-	if( $cd !== null ){
-		$sth->bindParam(':cd', $cd, PDO::PARAM_STR);	// パラメーターを設定
-	}
+	$sth->bindParam(':nickname', $nickname, PDO::PARAM_STR);		// ニックネームを設定
+	$sth->bindParam(':loginid',  $loginid,  PDO::PARAM_STR);		// ログインIDを設定
+	$sth->bindParam(':password', $password, PDO::PARAM_STR);		// パスワードを設定
 	$sth->execute();		// 実行
-
-	// DBから一括でデータを取得
-	$products = $sth->fetchAll(PDO::FETCH_ASSOC);
 }
 catch (PDOException $e) {
 	// エラー処理をここで行う
@@ -51,5 +42,5 @@ catch (PDOException $e) {
 //-----------------------------------------------
 header('Content-Type: application/json');
 echo json_encode([
-	'items' => $products
+	'status' => true
 ]);

@@ -28,3 +28,23 @@ body{
     font-size: 1.3em;
     font-weight: bold;
 }
+
+#dialog-join{
+    width: 600px;
+    height: 430px;
+    padding: 20px;
+}
+#dialog-join h1{
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+#dialog label{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+#btn-join-submit{
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 1.2em;
+}
