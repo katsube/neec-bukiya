@@ -1,3 +1,7 @@
+const User = {
+  session_id: null,
+};
+
 /**
  * [event] ページ読み込み完了時
  */
@@ -9,7 +13,7 @@ window.addEventListener('load', async ()=>{
   renderProductList();
 
   // 商品絞り込みタブのクリック時
-  const tabEl = document.querySelectorAll('button[data-bs-toggle="pill"]');
+  const tabEl = qAll('button[data-bs-toggle="pill"]');
   tabEl.forEach((element)=>{
     element.addEventListener('click', async ()=>{
       const category = element.getAttribute('data-category');
@@ -19,21 +23,69 @@ window.addEventListener('load', async ()=>{
   });
 
   //---------------------------------------------
+  // ログイン状態をチェック
+  //---------------------------------------------
+  const session_id = localStorage.getItem('session_id');
+  if( session_id !== null ) {
+    User.session_id = session_id;
+    q('#btn-logout').style.display = 'block'; // ログアウトボタンを表示
+  }
+  else{
+    q('#btn-join').style.display = 'block';   // 新規登録ボタンを表示
+    q('#btn-login').style.display = 'block';  // ログインボタンを表示
+  }
+
+  //---------------------------------------------
   // 新規登録ダイアログ
   //---------------------------------------------
   // 登録ボタンクリック時
-  document.querySelector('#btn-join').addEventListener('click', ()=>{
-    document.querySelector('#dialog-join').showModal(); // ダイアログを開く
-    document.querySelector('#join-nickname').focus();   // ニックネームをフォーカス
+  q('#btn-join').addEventListener('click', ()=>{
+    q('#dialog-join').showModal(); // ダイアログを開く
+    q('#join-nickname').focus();   // ニックネームをフォーカス
   });
   // 閉じるボタン
-  document.querySelector('#btn-join-close').addEventListener('click', ()=>{
-    document.querySelector('#dialog-join').close();
+  q('#btn-join-close').addEventListener('click', ()=>{
+    q('#dialog-join').close();
   });
   // 登録ボタン
-  document.querySelector('#btn-join-submit').addEventListener('click', userJoin);
+  q('#btn-join-submit').addEventListener('click', userJoin);
+
+  //---------------------------------------------
+  // ログインダイアログ
+  //---------------------------------------------
+  // ログインボタンクリック時
+  q('#btn-login').addEventListener('click', ()=>{
+    q('#dialog-login').showModal(); // ダイアログを開く
+    q('#loginid').focus();    // ログインIDをフォーカス
+  });
+  // 閉じるボタン
+  q('#btn-login-close').addEventListener('click', ()=>{
+    q('#dialog-login').close();
+  });
+  // ログインボタン
+  q('#btn-login-submit').addEventListener('click', userLogin);
+
+  //---------------------------------------------
+  // ログアウトボタン
+  //---------------------------------------------
+  // ログアウトボタンクリック時
+  q('#btn-logout').addEventListener('click', userLogout);
 });
 
+
+/*
+ * [wrapper] document.querySelector()
+ */
+function q(selector) {
+  return document.querySelector(selector);
+}
+
+/**
+ * [wrapper] document.querySelectorAll()
+ */
+function qAll(selector) {
+  return document.querySelectorAll(selector);
+}
 
 /**
  * ユーザー登録処理
@@ -41,9 +93,9 @@ window.addEventListener('load', async ()=>{
  */
 async function userJoin(){
   // 入力された値を取得
-  const nickname = document.querySelector('#join-nickname');
-  const loginid  = document.querySelector('#join-loginid');
-  const password = document.querySelector('#join-password');
+  const nickname = q('#join-nickname');
+  const loginid  = q('#join-loginid');
+  const password = q('#join-password');
 
   //---------------------------------------------
   // バリデーション
@@ -83,7 +135,78 @@ async function userJoin(){
   console.log('[userJoin] json', json);
   if(  'status' in json && json.status === true ) {
     alert('登録に成功しました');
-    location.reload();
+    location.reload();    // ページを再読込み
+  }
+}
+
+/**
+ * ログイン
+ *
+ */
+async function userLogin(){
+  // 入力された値を取得
+  const loginid  = q('#loginid');
+  const password = q('#password');
+
+  //---------------------------------------------
+  // バリデーション
+  //---------------------------------------------
+  if( loginid.value === '' ) {
+    alert('ログインIDを入力してください');
+    loginid.focus();
+    return(false);
+  }
+  if( password.value === '' ) {
+    alert('パスワードを入力してください');
+    password.focus();
+    return(false);
+  }
+
+  //---------------------------------------------
+  // APIに送信
+  //---------------------------------------------
+  // 送信するデータを準備
+  const params = {
+    loginid  : loginid.value,
+    password : password.value
+  };
+
+  const json = await fetchApi('api/user/login.php', params, 'POST');
+  console.log('[userLogin] json', json);
+  if( 'status' in json && json.status === true ) {
+    const session_id = json.session_id;
+    localStorage.setItem('session_id', session_id);
+    location.reload();    // ページを再読込み
+  }
+  else{
+    alert('ログインに失敗しました');
+  }
+}
+
+/**
+ * ログアウト
+ *
+ */
+async function userLogout(){
+  if( ! confirm('ログアウトしますか？') ){
+    return(false);
+  }
+
+  // 送信するデータを準備
+  const params = {
+    session_id: User.session_id
+  };
+
+  // ログアウトAPIに送信
+  const json = await fetchApi('api/user/logout.php', params, 'POST');
+  console.log('[userLogout] json', json);
+  if( 'status' in json && json.status === true ) {
+    alert('ログアウトしました\n（ページを再読込みします）');
+    localStorage.removeItem('session_id');    // ローカルストレージから削除
+    location.reload();    // ページを再読込み
+  }
+  else{
+    alert('ログアウトに失敗しました');
   }
 }
 
@@ -93,8 +216,8 @@ async function userJoin(){
  * @returns {void|false}
  */
 async function renderProductList(products=null) {
-  const list   = document.querySelector('#product-list');   // 商品一覧の親要素
-  const source = document.querySelector('#template-product-list-item'); // handlebarsのテンプレート
+  const list   = q('#product-list');   // 商品一覧の親要素
+  const source = q('#template-product-list-item'); // handlebarsのテンプレート
   const template = Handlebars.compile(source.innerHTML);
   Handlebars.registerHelper('showCategory', (category, option)=>{
     const list = {
@@ -131,7 +254,7 @@ async function renderProductList(products=null) {
   list.innerHTML = html;
 
   // 「買う」ボタンのイベント設定
-  document.querySelectorAll('.btn-buy').forEach((btn)=>{
+  qAll('.btn-buy').forEach((btn)=>{
     btn.addEventListener('click', ()=>{
       const id = btn.getAttribute('data-id');
       alert(`ToDo: id=${id}を購入する処理を実装`);

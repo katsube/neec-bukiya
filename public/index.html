@@ -31,7 +31,9 @@
           -->
         </ul>
         <form class="d-flex" role="join">
-          <button id="btn-join" class="btn btn-primary" type="button">新規登録</button>
+          <button id="btn-join" class="btn btn-danger" type="button">新規登録</button>&nbsp;
+          <button id="btn-login" class="btn btn-primary" type="button">ログイン</button>
+          <button id="btn-logout" class="btn btn-secondary" type="button">ログアウト</button>
         </form>
       </div>
     </div>
@@ -146,5 +148,27 @@
   </dialog>
   <!-- /新規登録用ダイアログ -->
 
+    <!-- ログイン用ダイアログ -->
+    <dialog id="dialog-login">
+      <header>
+        <button id="btn-login-close" class="btn-close float-end" type="button"></button>
+        <h1>ログイン</h1>
+      </header>
+      <form>
+        <div class="mb-3">
+          <label for="loginid" class="form-label">ログインID</label>
+          <input type="text" name="loginid" class="form-control" id="loginid" placeholder="例： foobar"  minlength="4" maxlength="12">
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">パスワード</label>
+          <input type="password" name="loginpassword" class="form-control" id="password" minlength="4" maxlength="32">
+        </div>
+        <!-- 送信ボタン -->
+        <div class="mb-3 text-center">
+          <button id="btn-login-submit" class="btn btn-primary" type="button">ログイン</button>
+        </div>
+      </form>
+    </dialog>
+    <!-- /新規登録用ダイアログ -->
 </body>
 </html>
