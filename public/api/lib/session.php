@@ -53,7 +53,7 @@ class Session{
 
 		// セッションIDをプロパティにセット
 		if( $sess_id !== null ){
-			$this->sess_id = $sess_id;
+			$this->setSessionId($sess_id);
 		}
 	}
 
@@ -64,6 +64,16 @@ class Session{
 	 */
 	function getSessionId(){
 		return( $this->sess_id );
+	}
+
+	/**
+	 * セッションIDを設定
+	 *
+	 * @param string $sess_id
+	 * @return void
+	 */
+	function setSessionId($sess_id){
+		$this->sess_id = $sess_id;
 	}
 
 	/**
@@ -214,6 +224,10 @@ class Session{
 			$sth->execute();		// 実行
 			$result = $sth->fetch(PDO::FETCH_ASSOC);		// 結果を取得
 
+			// キーが1つだけ指定されている場合は、その値を返す
+			if( count($keys) === 1 ){
+				return($result[$keys[0]]);
+			}
 			return($result);
 		}
 		catch(PDOException $e){
