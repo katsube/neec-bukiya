@@ -64,7 +64,7 @@ catch(PDOException $e){
 //-----------------------------------------------
 // SQLを準備
 $sql = <<<SQL
-SELECT B.id, B.name, B.description, B.image, B.regist_date as date
+SELECT B.id, B.name, B.description, B.image, A.regist_date as date
 FROM   Inventories A join Products B
           on A.product_id = B.id
 WHERE A.user_id = :user_id
