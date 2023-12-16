@@ -323,7 +323,7 @@ async function renderBuyDialog(product_id){
   // 表示要素を設定
   //---------------------------------------------
   // 商品画像
-  q('#dialog-buy img').src = `/image/weapon/${item.image}`;
+  q('#dialog-buy img').src = `image/weapon/${item.image}`;
 
   // 商品名
   q('#dialog-buy .product-name').textContent = item.name;
