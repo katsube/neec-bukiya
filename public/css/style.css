@@ -8,7 +8,7 @@ body{
     background-size: cover;
 }
 
-#btn-join, #btn-login, #btn-logout{
+#btn-join, #btn-login, #btn-buy, #btn-logout{
     display: none;
 }
 
@@ -70,6 +70,29 @@ body{
     font-weight: bold;
 }
 #btn-login-submit{
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 1.2em;
+}
+
+/*----- 商品購入ダイアログ -----*/
+#dialog-buy{
+    width: 410px;
+    height: 410px;
+    padding: 20px;
+    text-align: center;
+}
+#dialog-buy h1{
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+#dialog-buy .product-name{
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+#btn-buy-submit button{
     width: 100%;
     padding: 10px 20px;
     font-size: 1.2em;

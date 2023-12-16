@@ -1,6 +1,19 @@
 const User = {
   session_id: null,
 };
+const Product = {
+  items: [ ],
+  findById: (id)=>{
+    const items = Product.items;
+    const value = Number(id);
+    for(let i=0; i<items.length; i++){
+      if( items[i].id === value ){
+        return items[i];
+      }
+    }
+    return null;
+  }
+};
 
 /**
  * [event] ページ読み込み完了時
@@ -253,13 +266,81 @@ async function renderProductList(products=null) {
   const html = template(products);
   list.innerHTML = html;
 
-  // 「買う」ボタンのイベント設定
+  //-----------------------------
+  // 「買う」ボタン
+  //-----------------------------
   qAll('.btn-buy').forEach((btn)=>{
     btn.addEventListener('click', ()=>{
+      // 未ログイン時はログインダイアログを表示
+      if( User.session_id === null ) {
+        q('#dialog-login').showModal();
+        return;
+      }
+
+      // 商品購入ダイアログを表示
       const id = btn.getAttribute('data-id');
-      alert(`ToDo: id=${id}を購入する処理を実装`);
+      renderBuyDialog(id);
     });
   });
+}
+
+
+/**
+ * 商品購入ダイアログを描画する
+ *
+ * @param {number} product_id 商品ID
+ */
+async function renderBuyDialog(product_id){
+  const dialog = q('#dialog-buy');
+  const item = Product.findById(product_id);
+
+  //---------------------------------------------
+  // 表示要素を設定
+  //---------------------------------------------
+  // 商品画像
+  q('#dialog-buy img').src = `/image/weapon/${item.image}`;
+
+  // 商品名
+  q('#dialog-buy .product-name').textContent = item.name;
+
+  //---------------------------------------------
+  // 購入ボタン
+  //---------------------------------------------
+  const btn = q('#btn-buy-submit');
+  const btnClick = async ()=>{
+    const result = await requestBuyProduct(product_id);
+    if( result === true ) {
+      alert('購入しました');
+    }
+    else{
+      alert('購入に失敗しました');
+    }
+    dialog.close();
+  };
+
+  // 購入ボタン押下時
+  btn.addEventListener('click', btnClick);
+
+  //---------------------------------------------
+  // [event] 閉じるボタン
+  //---------------------------------------------
+  q('#btn-buy-close').addEventListener('click', ()=>{
+    dialog.close();
+  });
+
+  //---------------------------------------------
+  // [event] ダイアログを閉じた時
+  //---------------------------------------------
+  dialog.addEventListener('close', ()=>{
+    // 購入ボタンのイベントを削除
+    btn.removeEventListener('click', btnClick);
+  });
+
+  //---------------------------------------------
+  // ダイアログを開く
+  //---------------------------------------------
+  dialog.showModal();
+  q('#btn-buy-submit').focus(); // フォーカスを購入ボタンに移動
 }
 
 /**
@@ -268,14 +349,40 @@ async function renderProductList(products=null) {
  * @param {string} [category=null] - 商品カテゴリ
  * @return {Promise} 商品一覧
  */
-function getProductList(category=null) {
+async function getProductList(category=null) {
+  let response;
+
   // カテゴリー未指定（初回表示時）
   if( category === null || category === '' ) {
-    return fetchApi('api/item/list.php');
+    response = await fetchApi('api/item/list.php');
+  }
+  // カテゴリー指定（絞り込み時）
+  else{
+    response = await fetchApi('api/item/category.php', {cd:category});
   }
 
-  // カテゴリー指定（絞り込み時）
-  return fetchApi('api/item/category.php', {cd:category});
+  // グローバル変数に格納
+  Product.items = response.items;
+  return response;
+}
+
+/**
+ * 商品購入APIを呼び出す
+ *
+ * @param {number} product_id 商品ID
+ * @returns {boolean}
+ */
+async function requestBuyProduct(product_id){
+  // 送信するデータを準備
+  const params = {
+    session_id: User.session_id,
+    product_id
+  };
+
+  // 商品購入APIに送信
+  const json = await fetchApi('api/cart/buy.php', params, 'GET');
+  console.log('[userBuyProduct] json', json);
+  return ( ('status' in json) && (json.status === true) );
 }
 
 /**

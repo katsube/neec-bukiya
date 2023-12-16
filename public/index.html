@@ -148,27 +148,47 @@
   </dialog>
   <!-- /新規登録用ダイアログ -->
 
-    <!-- ログイン用ダイアログ -->
-    <dialog id="dialog-login">
-      <header>
-        <button id="btn-login-close" class="btn-close float-end" type="button"></button>
-        <h1>ログイン</h1>
-      </header>
-      <form>
-        <div class="mb-3">
-          <label for="loginid" class="form-label">ログインID</label>
-          <input type="text" name="loginid" class="form-control" id="loginid" placeholder="例： foobar"  minlength="4" maxlength="12">
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">パスワード</label>
-          <input type="password" name="loginpassword" class="form-control" id="password" minlength="4" maxlength="32">
-        </div>
-        <!-- 送信ボタン -->
-        <div class="mb-3 text-center">
-          <button id="btn-login-submit" class="btn btn-primary" type="button">ログイン</button>
-        </div>
-      </form>
-    </dialog>
-    <!-- /新規登録用ダイアログ -->
+  <!-- ログイン用ダイアログ -->
+  <dialog id="dialog-login">
+    <header>
+      <button id="btn-login-close" class="btn-close float-end" type="button"></button>
+      <h1>ログイン</h1>
+    </header>
+    <form>
+      <div class="mb-3">
+        <label for="loginid" class="form-label">ログインID</label>
+        <input type="text" name="loginid" class="form-control" id="loginid" placeholder="例： foobar"  minlength="4" maxlength="12">
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">パスワード</label>
+        <input type="password" name="loginpassword" class="form-control" id="password" minlength="4" maxlength="32">
+      </div>
+      <!-- 送信ボタン -->
+      <div class="mb-3 text-center">
+        <button id="btn-login-submit" class="btn btn-primary" type="button">ログイン</button>
+      </div>
+    </form>
+  </dialog>
+  <!-- /新規登録用ダイアログ -->
+
+  <!-- 購入確認ダイアログ -->
+  <dialog id="dialog-buy">
+    <header>
+      <button id="btn-buy-close" class="btn-close float-end" type="button"></button>
+      <h1>購入しますか？</h1>
+    </header>
+    <form>
+      <p id="buy-image">
+        <img width="100%" height="200">
+        <span class="product-name"></span>
+      </p>
+
+      <!-- 購入ボタン -->
+      <div class="mb-3 text-center" id="btn-buy-submit">
+        <button class="btn btn-danger" type="button">購入する</button>
+      </div>
+    </form>
+  </dialog>
+  <!-- /購入確認ダイアログ -->
 </body>
 </html>
