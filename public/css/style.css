@@ -8,7 +8,7 @@ body{
     background-size: cover;
 }
 
-#btn-join, #btn-login, #btn-buy, #btn-logout{
+#btn-join, #btn-login, #btn-buy, #btn-inventory, #btn-logout{
     display: none;
 }
 
@@ -93,6 +93,26 @@ body{
     margin-bottom: 20px;
 }
 #btn-buy-submit button{
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 1.2em;
+}
+
+/*----- 所有アイテム一覧ダイアログ -----*/
+#dialog-inventory{
+    width: 600px;
+    height: 600px;
+    padding: 20px;
+}
+#dialog-inventory h1{
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+#dialog-inventory footer{
+    text-align: center;
+}
+#btn-inventory-close-bottom{
     width: 100%;
     padding: 10px 20px;
     font-size: 1.2em;

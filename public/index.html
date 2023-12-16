@@ -33,6 +33,7 @@
         <form class="d-flex" role="join">
           <button id="btn-join" class="btn btn-danger" type="button">新規登録</button>&nbsp;
           <button id="btn-login" class="btn btn-primary" type="button">ログイン</button>
+          <button id="btn-inventory" class="btn btn-info" type="button">所有アイテム</button>&nbsp;
           <button id="btn-logout" class="btn btn-secondary" type="button">ログアウト</button>
         </form>
       </div>
@@ -190,5 +191,48 @@
     </form>
   </dialog>
   <!-- /購入確認ダイアログ -->
+
+  <!-- 所有アイテム一覧ダイアログ -->
+  <dialog id="dialog-inventory">
+    <header>
+      <button id="btn-inventory-close" class="btn-close float-end" type="button"></button>
+      <h1>所有アイテム</h1>
+    </header>
+    <div id="inventory-list">
+      <!-- ※ここにアイテム一覧を表示※ -->
+    </div>
+    <footer>
+      <button id="btn-inventory-close-bottom" class="btn btn-light" type="button">閉じる</button>
+    </footer>
+  </dialog>
+  <!-- /所有アイテム一覧ダイアログ -->
+
+  <!-- 所有アイテム一覧テンプレート -->
+  <script id="template-inventory-list" type="text/x-handlebars-template">
+    {{#if data}}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">画像</th>
+            <th scope="col">名前</th>
+            <th scope="col">購入日</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each data}}
+          <tr>
+            <td><img src="image/weapon/{{image}}" width="100"></td>
+            <td>{{name}}</td>
+            <td>{{date}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <p>※アイテムを所有していません※</p>
+    {{/if}}
+  </script>
+  <!-- /所有アイテム一覧テンプレート -->
+
 </body>
 </html>

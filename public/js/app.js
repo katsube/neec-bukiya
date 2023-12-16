@@ -41,6 +41,7 @@ window.addEventListener('load', async ()=>{
   const session_id = localStorage.getItem('session_id');
   if( session_id !== null ) {
     User.session_id = session_id;
+    q('#btn-inventory').style.display = 'block';    // 所有アイテムボタンを表示
     q('#btn-logout').style.display = 'block'; // ログアウトボタンを表示
   }
   else{
@@ -83,6 +84,12 @@ window.addEventListener('load', async ()=>{
   //---------------------------------------------
   // ログアウトボタンクリック時
   q('#btn-logout').addEventListener('click', userLogout);
+
+  //---------------------------------------------
+  // 所有アイテムボタン
+  //---------------------------------------------
+  // 所有アイテムボタンクリック時
+  q('#btn-inventory').addEventListener('click', userInventory);
 });
 
 
@@ -224,6 +231,24 @@ async function userLogout(){
 }
 
 /**
+ * 所有アイテム一覧を表示する
+ *
+ */
+function userInventory(){
+  // 未ログイン時はログインダイアログを表示
+  if( User.session_id === null ) {
+    q('#dialog-login').showModal();
+    return;
+  }
+
+  // 所有アイテム一覧を描画
+  renderInventoryList();
+
+  // ダイアログを開く
+  q('#dialog-inventory').showModal();
+}
+
+/**
  * 商品一覧を描画する
  *
  * @returns {void|false}
@@ -344,6 +369,50 @@ async function renderBuyDialog(product_id){
 }
 
 /**
+ * 所有アイテム一覧を描画する
+ *
+ */
+async function renderInventoryList(){
+  const list   = q('#inventory-list');   // 商品一覧の親要素
+  const source = q('#template-inventory-list'); // handlebarsのテンプレート
+  const template = Handlebars.compile(source.innerHTML);
+
+  //---------------------------------------------
+  // APIから商品一覧を取得
+  //---------------------------------------------
+  const inventory = await getInventoryList();
+  console.log('[renderInventoryList] inventory ', inventory);
+
+  if( !('data' in inventory) || !Array.isArray(inventory.data) ) {
+    alert('正常に取得できませんでした');
+    return(false);
+  }
+
+  // 所有アイテムがない場合はdataを削除
+  if( inventory.data.length === 0 ) {
+    delete inventory.data;
+  }
+
+  //---------------------------------------------
+  // 画面に描画する
+  //---------------------------------------------
+  // handlebarsで描画
+  const html = template(inventory);
+  list.innerHTML = html;
+
+  //---------------------------------------------
+  // [event] 閉じるボタン
+  //---------------------------------------------
+  q('#btn-inventory-close').addEventListener('click', ()=>{
+    q('#dialog-inventory').close();
+  });
+  q('#btn-inventory-close-bottom').addEventListener('click', ()=>{
+    q('#dialog-inventory').close();
+  });
+}
+
+
+/**
  * REST APIから商品一覧を取得する
  *
  * @param {string} [category=null] - 商品カテゴリ
@@ -364,6 +433,22 @@ async function getProductList(category=null) {
   // グローバル変数に格納
   Product.items = response.items;
   return response;
+}
+
+/**
+ * 所有アイテム一覧を取得する
+ *
+ */
+async function getInventoryList(){
+  // 送信するデータを準備
+  const params = {
+    session_id: User.session_id
+  };
+
+  // 所有アイテム一覧APIに送信
+  const json = await fetchApi('api/user/inventory.php', params, 'GET');
+  console.log('[getInventoryList] json', json);
+  return json;
 }
 
 /**
